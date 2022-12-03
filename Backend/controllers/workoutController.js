@@ -1,7 +1,7 @@
 const Workout = require('../model/workoutModel');
 const mongoose = require('mongoose');
 
-// get all workouts
+// --get all workouts
 const getWorkouts = async (req, res) => {
   try {
     // newest at top
@@ -12,16 +12,17 @@ const getWorkouts = async (req, res) => {
   }
 }
 
-// get a single workout
+// --get a single workout
 const getWorkout = async (req, res) => {
   const { id } = req.params
+  // check format of id
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: `No such workout` })
-
   }
 
   const singleWorkout = await Workout.findById(id)
 
+  // check exist
   if (!singleWorkout) {
     // "return" for don't run rest of code
     return res.status(404).json({ error: `No such workout` })
@@ -30,7 +31,7 @@ const getWorkout = async (req, res) => {
   res.status(200).json(singleWorkout)
 }
 
-// create a new workout
+// --create a new workout
 const createWorkout = async (req, res) => {
   const { title, reps, load } = req.body
 
@@ -42,12 +43,52 @@ const createWorkout = async (req, res) => {
     res.status(400).json({ error: error.message })
   }
 }
-// DELETE a workout
-// UPDATE a workout
+
+// --delete a workout
+const deleteWorkout = async (req, res) => {
+  const { id } = req.params
+  // check format of id
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: `No such workout` })
+  }
+
+  // "_" in mongoose we don't have id
+  const deletedWorkout = await Workout.findByIdAndDelete(id)
+
+  // check exist
+  if (!deletedWorkout) {
+    // "return" for don't run rest of code
+    return res.status(404).json({ error: `No such workout` })
+  }
+
+  res.status(200).json(deletedWorkout)
+}
+
+// --update a workout
+const updateWorkout = async (req, res) => {
+  const { id } = req.params
+  // check format of id
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: `No such workout` })
+  }
+
+  const updatedWorkout = await Workout.findByIdAndUpdate(id, { ...req.body })
+
+  // check exist
+  if (!updatedWorkout) {
+    // "return" for don't run rest of code
+    return res.status(404).json({ error: `No such workout` })
+  }
+
+  res.status(200).json(updatedWorkout)
+}
+
 
 
 module.exports = {
   createWorkout,
   getWorkout,
-  getWorkouts
+  getWorkouts,
+  deleteWorkout,
+  updateWorkout
 }
