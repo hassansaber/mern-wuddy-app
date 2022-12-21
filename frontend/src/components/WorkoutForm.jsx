@@ -8,6 +8,8 @@ const WorkoutForm = () => {
   const [reps, setReps] = useState("");
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
+
+  //submit func
   const handleSubmit = async (e) => {
     e.preventDefault();
 
