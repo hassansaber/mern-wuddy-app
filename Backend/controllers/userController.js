@@ -7,12 +7,6 @@ const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT_SECRET_KEY, { expiresIn: '3d' })
 }
 
-// login user
-const loginUser = async (req, res) => {
-  res.json({
-    message: 'login user'
-  })
-}
 
 // signup user
 const signupUser = async (req, res) => {
@@ -30,6 +24,28 @@ const signupUser = async (req, res) => {
 
     // must use {} inside json
     res.status(201).json({ email, token })
+  } catch (error) {
+    res.status(400).json({ error: error.message }) // message is what we throw 
+  }
+}
+
+
+// login user
+const loginUser = async (req, res) => {
+
+  // get email and password from req
+  const { email, password } = req.body
+
+
+  try {
+    //sign up using static
+    const user = await User.login(email, password) // user => whole new document
+
+    // create jwt token
+    const token = createToken(user._id)
+
+    // must use {} inside json
+    res.status(200).json({ email, token })
   } catch (error) {
     res.status(400).json({ error: error.message }) // message is what we throw 
   }
