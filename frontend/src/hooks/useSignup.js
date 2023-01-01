@@ -32,6 +32,7 @@ export const useSignup = () => {
     // if everything ok
     if (response.ok) {
       // save the user to local storage as JWT
+      // real LOG IN
       localStorage.setItem('user', JSON.stringify(json))
 
       // update auth context ==> {user,token}
