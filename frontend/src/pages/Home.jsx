@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 // components
 import WorkoutDetails from "../components/WorkoutDetails";
@@ -9,10 +10,17 @@ const Home = () => {
   // const [workouts, setWorkouts] = useState(null);
   const { workouts, dispatch } = useWorkoutContext();
 
+  // get user context
+  const { user } = useAuthContext();
+
   // run when component rendered , "[]" runs once
   useEffect(() => {
     const fetchWorkouts = async () => {
-      const response = await fetch("/api/workouts");
+      const response = await fetch("/api/workouts", {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       const json = await response.json();
 
       if (response.ok) {
@@ -21,8 +29,8 @@ const Home = () => {
       }
     };
 
-    fetchWorkouts();
-  }, []);
+    if (user) fetchWorkouts();
+  }, [dispatch, user]);
 
   return (
     <div className="home">
